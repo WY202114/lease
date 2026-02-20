@@ -1,8 +1,8 @@
 package com.wzc.lease.web.admin.service;
 
-import com.atguigu.lease.model.entity.SystemUser;
-import com.atguigu.lease.web.admin.vo.system.user.SystemUserItemVo;
-import com.atguigu.lease.web.admin.vo.system.user.SystemUserQueryVo;
+import com.wzc.lease.model.entity.SystemUser;
+import com.wzc.lease.web.admin.vo.system.user.SystemUserItemVo;
+import com.wzc.lease.web.admin.vo.system.user.SystemUserQueryVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 

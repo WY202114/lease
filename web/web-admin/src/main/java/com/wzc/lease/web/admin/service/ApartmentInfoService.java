@@ -1,10 +1,10 @@
 package com.wzc.lease.web.admin.service;
 
-import com.atguigu.lease.model.entity.ApartmentInfo;
-import com.atguigu.lease.web.admin.vo.apartment.ApartmentDetailVo;
-import com.atguigu.lease.web.admin.vo.apartment.ApartmentItemVo;
-import com.atguigu.lease.web.admin.vo.apartment.ApartmentQueryVo;
-import com.atguigu.lease.web.admin.vo.apartment.ApartmentSubmitVo;
+import com.wzc.lease.model.entity.ApartmentInfo;
+import com.wzc.lease.web.admin.vo.apartment.ApartmentDetailVo;
+import com.wzc.lease.web.admin.vo.apartment.ApartmentItemVo;
+import com.wzc.lease.web.admin.vo.apartment.ApartmentQueryVo;
+import com.wzc.lease.web.admin.vo.apartment.ApartmentSubmitVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;

@@ -98,6 +98,13 @@
                 <artifactId>dysmsapi20170525</artifactId>
                 <version>${aliyun.sms.version}</version>
             </dependency>
+            <!--lombok添加-->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.30</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

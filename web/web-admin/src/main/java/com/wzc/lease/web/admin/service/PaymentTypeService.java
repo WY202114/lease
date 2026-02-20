@@ -1,6 +1,6 @@
 package com.wzc.lease.web.admin.service;
 
-import com.atguigu.lease.model.entity.PaymentType;
+import com.wzc.lease.model.entity.PaymentType;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

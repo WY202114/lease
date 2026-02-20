@@ -1,7 +1,7 @@
 package com.wzc.lease.web.admin.service;
 
-import com.atguigu.lease.model.entity.FeeKey;
-import com.atguigu.lease.web.admin.vo.fee.FeeKeyVo;
+import com.wzc.lease.model.entity.FeeKey;
+import com.wzc.lease.web.admin.vo.fee.FeeKeyVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;

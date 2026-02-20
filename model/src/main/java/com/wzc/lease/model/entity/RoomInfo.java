@@ -1,6 +1,6 @@
 ﻿package com.wzc.lease.model.entity; // 包声明，定义当前类所在命名空间
 
-import com.atguigu.lease.model.enums.ReleaseStatus; // 导入当前文件依赖的类型
+import com.wzc.lease.model.enums.ReleaseStatus; // 导入当前文件依赖的类型
 import io.swagger.v3.oas.annotations.media.Schema; // 导入 OpenAPI 文档注解
 import com.baomidou.mybatisplus.annotation.TableField; // 导入 MyBatis-Plus 字段映射注解
 import com.baomidou.mybatisplus.annotation.TableName; // 导入 MyBatis-Plus 表映射注解
