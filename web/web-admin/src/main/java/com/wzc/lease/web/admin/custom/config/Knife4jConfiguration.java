@@ -1,4 +1,4 @@
-﻿package com.wzc.lease.web.admin.custom.config; // 管理端文档配置所在包
+package com.wzc.lease.web.admin.custom.config; // 管理端文档配置所在包
 
 import io.swagger.v3.oas.models.OpenAPI; // OpenAPI 顶层文档对象
 import io.swagger.v3.oas.models.info.Info; // 文档基础信息对象

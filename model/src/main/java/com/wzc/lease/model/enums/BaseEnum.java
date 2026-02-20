@@ -1,4 +1,4 @@
-﻿package com.wzc.lease.model.enums;
+package com.wzc.lease.model.enums;
 
 public interface BaseEnum {
 

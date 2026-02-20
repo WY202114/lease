@@ -1,4 +1,4 @@
-﻿package com.wzc.lease.web.admin.mapper; // 把该接口归类到管理端 mapper 包，便于统一扫描与注入
+package com.wzc.lease.web.admin.mapper; // 把该接口归类到管理端 mapper 包，便于统一扫描与注入
 
 import com.wzc.lease.model.entity.ApartmentFacility; // 指定当前 mapper 处理的数据实体类型（公寓与配套关系）
 import com.baomidou.mybatisplus.core.mapper.BaseMapper; // 复用 MyBatis-Plus 通用 CRUD 能力，减少手写 SQL

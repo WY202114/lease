@@ -1,4 +1,4 @@
-﻿package com.wzc.lease.web.admin.mapper;
+package com.wzc.lease.web.admin.mapper;
 
 import com.wzc.lease.model.entity.FeeValue;
 import com.wzc.lease.web.admin.vo.fee.FeeValueVo;

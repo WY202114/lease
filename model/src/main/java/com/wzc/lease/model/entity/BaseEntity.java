@@ -1,4 +1,4 @@
-﻿package com.wzc.lease.model.entity; // 包声明，定义当前类所在命名空间
+package com.wzc.lease.model.entity; // 包声明，定义当前类所在命名空间
 
 import com.baomidou.mybatisplus.annotation.IdType; // 导入 MyBatis-Plus 主键策略枚举
 import com.baomidou.mybatisplus.annotation.TableField; // 导入 MyBatis-Plus 字段映射注解

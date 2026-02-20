@@ -1,4 +1,4 @@
-﻿package com.wzc.lease.model.entity; // 包声明，定义当前类所在命名空间
+package com.wzc.lease.model.entity; // 包声明，定义当前类所在命名空间
 
 import com.wzc.lease.model.enums.ItemType; // 导入当前文件依赖的类型
 import io.swagger.v3.oas.annotations.media.Schema; // 导入 OpenAPI 文档注解
