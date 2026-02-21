@@ -103,3 +103,52 @@ mvn -pl web/web-admin -am spring-boot:run
 2. 增加数据库建表脚本或引入迁移工具（Flyway/Liquibase）。
 3. 增加认证鉴权与全局异常处理。
 4. 增加集成测试与接口测试。
+
+## MyBatis-Plus Service 调用链说明
+
+### 问题：为什么 Controller 里可以直接调 `service.saveOrUpdate()`？
+
+明明你在 `PaymentTypeService` 和 `PaymentTypeServiceImpl` 里一行代码都没写，却可以直接用 `saveOrUpdate()`、`list()`、`getById()` 这些方法？
+
+### 答案：因为这些方法是从"父辈"继承来的
+
+打个比方：你爸会开车，你继承了你爸，那你也会开车，不需要自己再学一遍。
+
+在代码里也是一样的：
+
+```
+你写的 PaymentTypeService  ──继承了──>  IService（MyBatis-Plus 提供的，里面有几十个现成方法）
+你写的 PaymentTypeServiceImpl  ──继承了──>  ServiceImpl（MyBatis-Plus 提供的，里面写好了所有方法的具体实现）
+```
+
+所以虽然你什么都没写，但通过继承，你的 Service 已经自带了 `saveOrUpdate()`、`list()`、`getById()` 等方法。
+
+### 具体看代码
+
+**第1步：你的 Service 接口继承了 IService**
+```java
+// PaymentTypeService.java
+public interface PaymentTypeService extends IService<PaymentType> {
+    // 虽然这里是空的，但因为继承了 IService，所以已经拥有了 saveOrUpdate()、list() 等方法的"声明"
+}
+```
+
+**第2步：你的实现类继承了 ServiceImpl**
+```java
+// PaymentTypeServiceImpl.java
+public class PaymentTypeServiceImpl extends ServiceImpl<PaymentTypeMapper, PaymentType>
+    implements PaymentTypeService {
+    // 虽然这里也是空的，但因为继承了 ServiceImpl，所以 saveOrUpdate()、list() 等方法已经有了"具体实现"
+}
+```
+
+**第3步：Controller 直接调用**
+```java
+// PaymentTypeController.java
+service.saveOrUpdate(paymentType);  // 直接就能用，因为上面两步已经把方法准备好了
+```
+
+### 总结
+
+> **你不用自己写 `saveOrUpdate()` 的代码，因为 MyBatis-Plus 已经帮你写好了，你只需要通过 `extends`（继承）就能直接用。**
+
