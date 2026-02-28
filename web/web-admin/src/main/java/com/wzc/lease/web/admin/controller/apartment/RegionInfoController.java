@@ -16,22 +16,22 @@ import java.util.List;
 
 @Tag(name = "地区信息管理")
 @RestController
-@RequestMapping("/admin/region")
+@RequestMapping("/admin/region") // 定义当前控制器的统一请求路径前缀
 public class RegionInfoController {
 
     @Operation(summary = "查询省份信息列表")
-    @GetMapping("province/list")
+    @GetMapping("province/list") // 处理 HTTP GET 请求，常用于查询数据
     public Result<List<ProvinceInfo>> listProvince() {
         return Result.ok();
     }
 
     @Operation(summary = "根据省份id查询城市信息列表")
-    @GetMapping("city/listByProvinceId")
+    @GetMapping("city/listByProvinceId") // 处理 HTTP GET 请求，按条件查询列表
     public Result<List<CityInfo>> listCityInfoByProvinceId(@RequestParam Long id) {
         return Result.ok();
     }
 
-    @GetMapping("district/listByCityId")
+    @GetMapping("district/listByCityId") // 处理 HTTP GET 请求，按条件查询列表
     @Operation(summary = "根据城市id查询区县信息")
     public Result<List<DistrictInfo>> listDistrictInfoByCityId(@RequestParam Long id) {
         return Result.ok();

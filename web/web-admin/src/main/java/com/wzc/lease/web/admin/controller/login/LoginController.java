@@ -11,23 +11,23 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "后台管理系统登录管理")
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin") // 定义当前控制器的统一请求路径前缀
 public class LoginController {
 
     @Operation(summary = "获取图形验证码")
-    @GetMapping("login/captcha")
+    @GetMapping("login/captcha") // 处理 HTTP GET 请求，常用于查询数据
     public Result<CaptchaVo> getCaptcha() {
         return Result.ok();
     }
 
     @Operation(summary = "登录")
-    @PostMapping("login")
+    @PostMapping("login") // 处理 HTTP POST 请求，常用于提交登录表单
     public Result<String> login(@RequestBody LoginVo loginVo) {
         return Result.ok();
     }
 
     @Operation(summary = "获取登陆用户个人信息")
-    @GetMapping("info")
+    @GetMapping("info") // 处理 HTTP GET 请求，查询当前登录用户信息
     public Result<SystemUserInfoVo> info() {
         return Result.ok();
     }

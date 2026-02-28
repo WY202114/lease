@@ -13,7 +13,9 @@ public enum LeaseStatus implements BaseEnum {
     WITHDRAWN(6, "已退租"),
     RENEWING(7, "续约待确认");
 
+    // MyBatis-Plus 持久化枚举时，使用该字段值写入数据库
     @EnumValue
+    // Jackson 序列化枚举时，使用该字段值输出到 JSON
     @JsonValue
     private Integer code;
 

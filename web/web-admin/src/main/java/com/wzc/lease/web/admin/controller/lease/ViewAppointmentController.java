@@ -12,18 +12,18 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Tag(name = "预约看房管理")
-@RequestMapping("/admin/appointment")
+@RequestMapping("/admin/appointment") // 定义当前控制器的统一请求路径前缀
 @RestController
 public class ViewAppointmentController {
 
     @Operation(summary = "分页查询预约信息")
-    @GetMapping("page")
+    @GetMapping("page") // 处理 HTTP GET 请求，常用于查询数据
     public Result<IPage<AppointmentVo>> page(@RequestParam long current, @RequestParam long size, AppointmentQueryVo queryVo) {
         return Result.ok();
     }
 
     @Operation(summary = "根据id更新预约状态")
-    @PostMapping("updateStatusById")
+    @PostMapping("updateStatusById") // 处理 HTTP POST 请求，执行状态更新动作
     public Result updateStatusById(@RequestParam Long id, @RequestParam AppointmentStatus status) {
         return Result.ok();
     }

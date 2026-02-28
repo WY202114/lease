@@ -3,9 +3,16 @@ package com.wzc.lease.common.result;
 import lombok.Getter;
 
 /**
- * 统一返回结果状态信息类
+ * 作用：统一定义接口返回码与返回信息（code + message），
+ * 供 Result.build(...) / Result.ok(...) / Result.fail(...) 统一复用，
+ * 避免在各个 Controller 中硬编码状态码和提示语。
+ *
+ * 为什么用 @Getter 而不是 @Data：
+ * 1. 本类是 enum，只需要读取 code、message，不需要 setter；
+ * 2. 字段是 final，本身不应被修改；
+ * 3. @Data 额外生成的方法在 enum 场景下价值不大，@Getter 更精确。
  */
-@Getter
+@Getter // 仅生成 getter；枚举只读场景下比 @Data 更合适
 public enum ResultCodeEnum {
 
     SUCCESS(200, "成功"),

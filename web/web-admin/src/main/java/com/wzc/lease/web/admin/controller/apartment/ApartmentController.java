@@ -18,41 +18,41 @@ import java.util.List;
 
 @Tag(name = "公寓信息管理")
 @RestController
-@RequestMapping("/admin/apartment")
+@RequestMapping("/admin/apartment") // 定义当前控制器的统一请求路径前缀
 public class ApartmentController {
 
     @Operation(summary = "保存或更新公寓信息")
-    @PostMapping("saveOrUpdate")
+    @PostMapping("saveOrUpdate") // 处理 HTTP POST 请求，常用于新增或更新
     public Result saveOrUpdate(@RequestBody ApartmentSubmitVo apartmentSubmitVo) {
         return Result.ok();
     }
 
     @Operation(summary = "根据条件分页查询公寓列表")
-    @GetMapping("pageItem")
+    @GetMapping("pageItem") // 处理 HTTP GET 请求，常用于查询数据
     public Result<IPage<ApartmentItemVo>> pageItem(@RequestParam long current, @RequestParam long size, ApartmentQueryVo queryVo) {
         return Result.ok();
     }
 
     @Operation(summary = "根据ID获取公寓详细信息")
-    @GetMapping("getDetailById")
+    @GetMapping("getDetailById") // 处理 HTTP GET 请求，按ID查询详情
     public Result<ApartmentDetailVo> getDetailById(@RequestParam Long id) {
         return Result.ok();
     }
 
     @Operation(summary = "根据id删除公寓信息")
-    @DeleteMapping("removeById")
+    @DeleteMapping("removeById") // 处理 HTTP DELETE 请求，按ID删除数据
     public Result removeById(@RequestParam Long id) {
         return Result.ok();
     }
 
     @Operation(summary = "根据id修改公寓发布状态")
-    @PostMapping("updateReleaseStatusById")
+    @PostMapping("updateReleaseStatusById") // 处理 HTTP POST 请求，执行状态更新动作
     public Result updateReleaseStatusById(@RequestParam Long id, @RequestParam ReleaseStatus status) {
         return Result.ok();
     }
 
     @Operation(summary = "根据区县id查询公寓信息列表")
-    @GetMapping("listInfoByDistrictId")
+    @GetMapping("listInfoByDistrictId") // 处理 HTTP GET 请求，按条件查询列表
     public Result<List<ApartmentInfo>> listInfoByDistrictId(@RequestParam Long id) {
         return Result.ok();
     }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "支付方式管理")
-@RequestMapping("/admin/payment")
+@RequestMapping("/admin/payment") // 定义当前控制器的统一请求路径前缀
 @RestController // Spring 注解：标记这是一个控制器类，且所有方法的返回值会自动转为 JSON 返回给前端（相当于 @Controller +
                 // @ResponseBody 的组合）
 public class PaymentTypeController {
@@ -27,7 +27,7 @@ public class PaymentTypeController {
      * 3. 本接口只查询 is_deleted = 0 的数据，因此返回结果中的 isDeleted 都是 0。
      */
     @Operation(summary = "查询全部支付方式列表")
-    @GetMapping("list")
+    @GetMapping("list") // 处理 HTTP GET 请求，常用于查询数据
     /**
      * 查询支付方式列表（仅返回未删除的数据）。
      *
@@ -47,7 +47,7 @@ public class PaymentTypeController {
     }
 
     @Operation(summary = "保存或更新支付方式")
-    @PostMapping("saveOrUpdate")
+    @PostMapping("saveOrUpdate") // 处理 HTTP POST 请求，常用于新增或更新
     public Result saveOrUpdatePaymentType(@RequestBody PaymentType paymentType) {
         // MyBatis-Plus 的 saveOrUpdate 方法：自动判断是新增还是更新
         // 判断依据：看实体对象的主键（id）是否有值
@@ -59,7 +59,7 @@ public class PaymentTypeController {
     }
 
     @Operation(summary = "根据ID删除支付方式")
-    @DeleteMapping("deleteById")
+    @DeleteMapping("deleteById") // 处理 HTTP DELETE 请求，按ID删除数据
     public Result deletePaymentById(@RequestParam Long id) {
         // MyBatis-Plus 的 removeById 方法：根据主键（id）删除记录
         // 注意：因为我们在 BaseEntity 的 isDeleted 字段上加了 @TableLogic 注解
