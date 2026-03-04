@@ -47,13 +47,16 @@ public class LabelController {
     @Operation(summary = "新增或修改标签信息")
     @PostMapping("saveOrUpdate") // 处理 HTTP POST 请求，常用于新增或更新
     public Result saveOrUpdateLabel(@RequestBody LabelInfo labelInfo) {
-
+        // 保存或更新单条标签信息（根据主键是否存在自动判断新增或更新）
+        service.saveOrUpdate(labelInfo);
         return Result.ok();
     }
 
     @Operation(summary = "根据id删除标签信息")
     @DeleteMapping("deleteById") // 处理 HTTP DELETE 请求，按ID删除数据
     public Result deleteLabelById(@RequestParam Long id) {
+        // 按标签主键 id 执行逻辑删除
+        service.removeById(id);
         return Result.ok();
     }
 }

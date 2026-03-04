@@ -2,6 +2,59 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wzc.lease.web.admin.mapper.AttrKeyMapper">
 
+<mapper namespace="com.wzc.lease.web.admin.mapper.AttrKeyMapper">
+    <!-- 
+        为什么这里必须写 resultMap？
+        因为查出来的原始数据是扁平的表格形式，比如：
+        | id | name | attr_value_id | attr_value_name |
+        | 11 | 朝向 | 201           | 东              |
+        | 11 | 朝向 | 202           | 南              |
+        
+        如果只用 resultType，MyBatis 遇到两行数据，就会老老实实地创建两个独立的 AttrKeyVo 对象。
+        而 resultMap 配合 collection 标签，相当于告诉 MyBatis：
+        “遇到相同的主键（id=11）时，不要再建立新的 AttrKeyVo 对象了，把后面的属性值（东、南）统统塞到同一个 AttrKeyVo 对象的 attrValueList 集合里面去！”
+        这样才能把多行扁平数据合并成一个包含 List 的立体对象。
+    -->
+    <resultMap id="AttrKeyMap" type="com.wzc.lease.web.admin.vo.attr.AttrKeyVo">
+        <id property="id" column="id"></id>
+        <result property="name" column="name"/>
+        <collection property="attrValueList" ofType="com.wzc.lease.model.entity.AttrValue">
+            <id property="id" column="attr_value_id"/>
+            <result property="name" column="attr_value_name"/>
+            <result property="attrKeyId" column="attr_key_id"/>
+        </collection>
+    </resultMap>
+    
+    <!-- <select id="listAttrInfo" resultType="com.wzc.lease.web.admin.vo.attr.AttrKeyVo">-->
+    <!-- 
+        为什么必须从普通的 join 改成 left join？
+        如果是普通的 join (内连接)：如果某个属性（比如“宽带情况”）刚刚建立，它还没有录入任何的属性值（在 attr_value 表中找不到对应数据），
+        那么普通的 join 会直接把这个属性过滤掉，导致页面上查不到“宽带情况”这个属性名。
+        
+        改成 left join (左连接) 后：即使右表（attr_value）没有数据，也会强行把左表（attr_key）的数据查出来。
+        这样的话，页面上仍然能显示出“宽带情况”这个属性，只不过它的 attrValueList 是一个空集合，符合我们的实际业务需求。
+    -->
+    <select id="listAttrInfo" resultMap="AttrKeyMap">
+        select k.id,
+               k.name,
+               v.id attr_value_id,
+               v.name attr_value_name,
+               v.attr_key_id
+        from attr_key k
+                <!-- 
+                    注意：LEFT JOIN 时，右表（attr_value v）自身的过滤条件（比如 v.is_deleted = 0）必须写在 ON 后面，绝对不能写在 WHERE 后面！
+                    
+                    原因解释：
+                    1. 如果写在 ON 里：这是在两表“连接的过程中”进行过滤。如果右表中有 is_deleted = 1 的脏数据，或者干脆没有对应数据，连接匹配会失败。
+                       但是因为是 left join（左连接），左表（attr_key）的数据依然会被强制保留查出来，这正是我们期望的效果。
+                    2. 如果写在 WHERE 里：这是在两表“连接完成之后”再进行全局过滤。
+                       假如左表保留了一条数据，但此时右表是空的（全是 null）。到了 WHERE 阶段，就会查 `null = 0`，结果为 false。
+                       这会导致本来好不容易被 left join 保留下来的左表记录，直接被 WHERE 语句当作不满足条件给一刀切掉。
+                       这样 left join 就彻底失效了（实际上退化成了 inner join）。
+                -->
+                left join attr_value v
+                on k.id = v.attr_key_id and v.is_deleted = 0
+        where k.is_deleted = 0
+    </select>
 </mapper>

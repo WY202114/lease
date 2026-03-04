@@ -4,4 +4,39 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wzc.lease.web.admin.mapper.FeeKeyMapper">
 
+    <!-- 
+        autoMapping="true"：开启自动映射。
+        对于像 unit, fee_key_id 等在后续 SQL 里查了但没有在 resultMap 里显式配置 <result> 的字段，
+        只要数据库列名和实体类的属性名（下划线转驼峰）能对得上，MyBatis 就会自动帮你把值塞进去。
+        这极大地减少了 XML 的冗余代码。
+    -->
+    <resultMap id="FeeKeyVoMap" type="com.wzc.lease.web.admin.vo.fee.FeeKeyVo" autoMapping="true">
+        <id property="id" column="id"/>
+        <!-- 
+            ofType="com.wzc.lease.model.entity.FeeValue" 必须要写！
+            为什么？因为 java 中带有泛型擦除机制。虽然你在实体类里写了 List<FeeValue> feeValueList，
+            但在运行期间 MyBatis 并不知道这个 List 里面到底装的是什么。
+            通过 ofType，你明确告诉了 MyBatis：“这个集合里装的每个元素都是 FeeValue 对象”，
+            这样 MyBatis 才知道应该去实例化哪个类，并把 fee_value_id 和 fee_value_name 塞进去。
+            
+            内部的 autoMapping="true" 同理，是告诉这个 collection 里面的字段如果能名称匹配也自动映射。
+        -->
+        <collection property="feeValueList" ofType="com.wzc.lease.model.entity.FeeValue" autoMapping="true">
+            <id property="id" column="fee_value_id"/>
+            <result property="name" column="fee_value_name"/>
+        </collection>
+    </resultMap>
+    
+    <select id="feeInfoList" resultMap="FeeKeyVoMap">
+        select k.id,
+               k.name,
+               v.id fee_value_id,
+               v.name fee_value_name,
+               v.unit,
+               v.fee_key_id
+        from fee_key k
+                 left join fee_value v
+                           on k.id = v.fee_key_id and v.is_deleted = 0
+        where k.is_deleted = 0
+    </select>
 </mapper>
