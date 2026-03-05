@@ -40,18 +40,25 @@ public class RegionInfoController {
 
     @Operation(summary = "根据省份id查询城市信息列表")
     @GetMapping("city/listByProvinceId") // 处理 HTTP GET 请求，按条件查询列表
+    // 这里的参数 id 代表的是“省份的ID”，前端传过来的是省份编号
     public Result<List<CityInfo>> listCityInfoByProvinceId(@RequestParam Long id) {
         LambdaQueryWrapper<CityInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(CityInfo::getProvinceId,id);
+        // 拿着省份ID，去城市表(city_info)里找：哪些城市的 province_id(所属省份) 等于这个 id
+        // 等价 SQL: WHERE province_id = #{id}
+        queryWrapper.eq(CityInfo::getProvinceId, id);
         List<CityInfo> list = cityInfoService.list(queryWrapper);
         return Result.ok(list);
     }
 
     @GetMapping("district/listByCityId") // 处理 HTTP GET 请求，按条件查询列表
     @Operation(summary = "根据城市id查询区县信息")
+    // 这里的参数 id 代表的是“城市的ID”，前端传过来的是城市编号
     public Result<List<DistrictInfo>> listDistrictInfoByCityId(@RequestParam Long id) {
         LambdaQueryWrapper<DistrictInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(DistrictInfo::getCityId,id);
+        // 拿着城市ID，去区县表(district_info)里找：哪些区县的 city_id(所属城市) 等于这个 id
+        // 等价 SQL: WHERE city_id = #{id}
+        // 虽然两个方法的参数都叫 id，但它们代表的父级不同：上面是省的ID，这里是市的ID
+        queryWrapper.eq(DistrictInfo::getCityId, id);
         List<DistrictInfo> list = districtInfoService.list(queryWrapper);
         return Result.ok(list);
     }
