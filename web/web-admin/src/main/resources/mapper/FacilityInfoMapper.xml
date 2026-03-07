@@ -4,4 +4,27 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wzc.lease.web.admin.mapper.FacilityInfoMapper">
 
+    <select id="selectListByApartmentById" resultType="com.wzc.lease.model.entity.FacilityInfo">
+        <!--
+            【外层查询 - 主表 facility_info】
+            根据内层查出的配套 ID 列表，从主表中查询配套的详细信息（名称、类型、图标）
+            公寓与配套是多对多关系，需要通过中间表 apartment_facility 来关联
+        -->
+        select id,
+               type,
+               name,
+               icon
+        from facility_info
+        where is_deleted = 0
+          and id in (
+              <!--
+                  【内层子查询 - 中间表 apartment_facility】
+                  先从中间表查出"该公寓关联了哪些配套的 ID"
+                  例如公寓 ID=1 关联了配套 [2, 5, 8]，则返回这组 facility_id
+              -->
+              select facility_id
+              from apartment_facility
+              where is_deleted = 0
+                and apartment_id = #{id})
+    </select>
 </mapper>

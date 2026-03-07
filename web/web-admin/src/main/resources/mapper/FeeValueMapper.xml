@@ -4,4 +4,36 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wzc.lease.web.admin.mapper.FeeValueMapper">
 
+    <select id="selectListByApartmentById" resultType="com.wzc.lease.web.admin.vo.fee.FeeValueVo">
+        <!--
+            fee_value 表和 fee_key 表都有 name 列：
+            - fv.name → 费用值名称（如"3元/度"），映射到 FeeValueVo 继承的 name 属性
+            - fk.name → 费用类型名称（如"水费"），需要映射到 FeeValueVo.feeKeyName 属性
+
+            问题：如果直接写 fk.name，查询结果的列名就是 name，
+            MyBatis 会把它映射到 name 属性，而 feeKeyName 属性找不到对应的列 → null
+
+            解决：给 fk.name 取别名 fee_key_name，
+            MyBatis 自动将下划线转驼峰：fee_key_name → feeKeyName → 映射成功！
+        -->
+        select fv.id,
+               fv.name,
+               fv.unit,
+               fv.fee_key_id,
+               fk.id,
+               fk.name fee_key_name  <!-- 取别名 fee_key_name → 驼峰转换后匹配 FeeValueVo.feeKeyName -->
+        <!-- fee_value 表关联 fee_key 表，通过 fee_key_id 外键连接，获取费用类型名称 -->
+        from fee_value fv
+                 join fee_key fk on fk.id = fv.fee_key_id
+        where fv.is_deleted = 0
+          and fk.is_deleted = 0
+          <!--
+              【内层子查询 - 中间表 apartment_fee_value】
+              先从中间表查出"该公寓关联了哪些杂费的 ID"，再用这些 ID 筛选外层的 fee_value
+          -->
+          and fv.id in (select fee_value_id
+                        from apartment_fee_value
+                        where is_deleted = 0
+                          and apartment_id = #{id})
+    </select>
 </mapper>

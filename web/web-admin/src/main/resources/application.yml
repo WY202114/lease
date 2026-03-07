@@ -26,3 +26,7 @@ minio:
   access-key: minioadmin
   secret-key: minioadmin
   bucket-name: lease
+
+#让 springdoc-openapi 在生成接口文档时，把“作为请求参数对象的 VO”展开成多个普通查询参数，而不是当成一个整体对象显示
+springdoc:
+  default-flat-param-object: true

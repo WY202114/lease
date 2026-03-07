@@ -4,4 +4,93 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wzc.lease.web.admin.mapper.ApartmentInfoMapper">
 
+    <select id="pageItem" resultType="com.wzc.lease.web.admin.vo.apartment.ApartmentItemVo">
+        <!--
+        静态固定条件（原代码）和下方动态条件的区别：
+        1. 这里的条件是静态写死的，如果前端查询时“省/市/区”任意一个参数没传（为 null），也会强制拼接到 SQL 中（例如：and district_id = null），直接导致数据库查不到数据。
+        2. 下方的 <where> 和 <if> 标签是 MyBatis 的动态 SQL 写法，只有当参数不为空时，才会将对应条件拼接到查询中。这能完美实现后台灵活的多条件组合查询或默认全量查询的情况。
+
+        select
+        from apartment_info
+        where is_deleted = 0
+          and province_id = #{queryVo.provinceId}
+          and city_id = #{queryVo.city_id}
+          and district_id = #{queryVo.district_id} #主表
+        -->
+        select apartmentinfo.id,
+               apartmentinfo.name,
+               apartmentinfo.introduction,
+               apartmentinfo.district_id,
+               apartmentinfo.district_name,
+               apartmentinfo.city_id,
+               apartmentinfo.city_name,
+               apartmentinfo.province_id,
+               apartmentinfo.province_name,
+               apartmentinfo.address_detail,
+               apartmentinfo.latitude,
+               apartmentinfo.longitude,
+               apartmentinfo.phone,
+               apartmentinfo.is_release,
+                ifnull(totalcount.cnt, 0) total_room_count,
+                ifnull(totalcount.cnt, 0) - ifnull(checkcount.cnt, 0) free_room_count
+            <!--
+            ifnull 防止没有关联记录时出现 null，统一按 0 处理。
+            如果某个公寓没有已发布房间，totalcount 这边就查不到这一行
+            如果某个公寓没有已签约/退租中的租约，checkcount 这边也查不到这一行
+            left join 查不到时，对应列值就是 null
+            举个例子：
+
+            公寓 A 有 5 个已发布房间，2 个已占用
+            5 - 2 = 3
+            公寓 B 有 5 个已发布房间，但没有任何租约记录
+            5 - null = null，这显然不对，所以要变成 5 - 0 = 5
+            公寓 C 还没有任何已发布房间
+            null - null = null，也不对，所以要变成 0 - 0 = 0
+            -->
+        from (select
+                id,
+                name,
+                introduction,
+                district_id,
+                district_name,
+                city_id,
+                city_name,
+                province_id,
+                province_name,
+                address_detail,
+                latitude,
+                longitude,
+                phone,
+                is_release
+              from apartment_info
+                <where>
+                    is_deleted = 0
+                    <if test="queryVo.provinceId != null">
+                        and province_id = #{queryVo.provinceId}
+                    </if>
+                    <if test="queryVo.cityId != null">
+                        and city_id = #{queryVo.cityId}
+                    </if>
+                    <if test="queryVo.districtId != null">
+                        and district_id = #{queryVo.districtId}
+                    </if>
+                </where>
+              ) apartmentinfo
+                 left join
+             (select apartment_id, 
+                     count(*) cnt
+              from room_info
+              where is_deleted = 0
+                and is_release = 1
+              group by apartment_id) totalcount
+             on apartmentinfo.id = totalcount.apartment_id
+                 left join
+             (select apartment_id,
+                     count(*) cnt
+              from lease_agreement
+              where is_deleted = 0
+                and status in (2, 5)
+              group by apartment_id) checkcount
+             on apartmentinfo.id = checkcount.apartment_id
+    </select>
 </mapper>

@@ -1,7 +1,24 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+namespace: 指定该 XML 文件绑定的 Mapper 接口的全限定类名，MyBatis 通过它将接口方法与此文件中的 SQL 语句关联起来 
+namespace 就是告诉 MyBatis："这个 XML 里的 SQL 是给哪个 Java 接口用的"。
+-->
 <mapper namespace="com.wzc.lease.web.admin.mapper.GraphInfoMapper">
 
+    <!--
+        id: 对应 Mapper 接口中的方法名 selectByItemTypeAndId，MyBatis 通过此 id 将接口方法与 SQL 语句绑定
+        resultType: 指定查询结果映射的 Java 类型为 GraphVo，每一行结果会自动封装为该对象
+    -->
+    <select id="selectByItemTypeAndId" resultType="com.wzc.lease.web.admin.vo.graph.GraphVo">
+        select
+            name,   <!-- 图片名称 -->
+            url     <!-- 图片地址 -->
+        from graph_info
+        where is_deleted = 0            <!-- 过滤已逻辑删除的记录（0 表示未删除） -->
+        and item_type = #{itemType}     <!-- 关联的实体类型（如公寓 / 房间），由方法参数 itemType 传入 -->
+        and item_id = #{id}             <!-- 关联的实体 ID，由方法参数 id 传入 -->
+    </select>
 </mapper>
