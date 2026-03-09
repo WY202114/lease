@@ -1,5 +1,6 @@
 package com.wzc.lease.web.admin.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wzc.lease.model.entity.SystemUser;
 import com.wzc.lease.web.admin.vo.system.user.SystemUserItemVo;
 import com.wzc.lease.web.admin.vo.system.user.SystemUserQueryVo;
@@ -14,6 +15,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 */
 public interface SystemUserMapper extends BaseMapper<SystemUser> {
 
+
+    IPage<SystemUserItemVo> pageSystemUser(Page<SystemUser> page, SystemUserQueryVo queryVo);
 }
 
 

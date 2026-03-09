@@ -4,4 +4,47 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wzc.lease.web.admin.mapper.SystemUserMapper">
 
+    <!--
+        pageSystemUser: 分页查询后台用户列表（多表关联查询）
+        - 返回类型为 SystemUserItemVo，包含用户信息 + 所属岗位名称
+        - MyBatis-Plus 的分页插件会自动为该 SQL 追加 LIMIT 子句，无需手动编写
+    -->
+    <select id="pageSystemUser" resultType="com.wzc.lease.web.admin.vo.system.user.SystemUserItemVo">
+        <!-- 查询字段：从 system_user 表取用户基本信息，从 system_post 表取岗位名称 -->
+        select su.id,
+               username,
+               su.name,            <!-- 用户姓名（使用 su. 前缀避免与 sp.name 冲突） -->
+               type,
+               phone,
+               avatar_url,
+               additional_info,
+               post_id,
+               su.status,          <!-- 用户状态（使用 su. 前缀避免与 sp.status 冲突） -->
+               sp.name post_name   <!-- 岗位名称，取自 system_post 表，别名为 post_name -->
+        <!-- 主表：system_user（后台用户表），别名 su -->
+        from system_user su
+                 <!--
+                     LEFT JOIN 关联 system_post（岗位表），别名 sp
+                     关联条件：su.post_id = sp.id（用户所属岗位）
+                     额外条件：sp.is_deleted = 0（只关联未被逻辑删除的岗位）
+                     使用 LEFT JOIN 是因为：即使用户没有分配岗位（post_id 为空），也应该被查出来
+                 -->
+                 left join system_post sp on su.post_id = sp.id and sp.is_deleted = 0
+        <!--
+            <where> 标签：MyBatis 动态 SQL 标签
+            作用：自动生成 WHERE 关键字，并智能处理多余的 AND/OR 前缀
+        -->
+        <where>
+            <!-- 基础条件：只查未被逻辑删除的用户 -->
+            su.is_deleted = 0
+            <!-- 动态条件：如果前端传了 name 参数且不为空，则按姓名模糊查询 -->
+            <if test="queryVo.name != null and queryVo.name != ''">
+                and su.name like concat('%',#{queryVo.name},'%')
+            </if>
+            <!-- 动态条件：如果前端传了 phone 参数且不为空，则按手机号模糊查询 -->
+            <if test="queryVo.phone !=null and queryVo.phone != ''">
+                and su.phone like concat('%',#{queryVo.phone},'%')
+            </if>
+        </where>
+    </select>
 </mapper>

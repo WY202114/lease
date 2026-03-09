@@ -1,5 +1,6 @@
 package com.wzc.lease.web.admin.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wzc.lease.model.entity.SystemUser;
 import com.wzc.lease.web.admin.vo.system.user.SystemUserItemVo;
 import com.wzc.lease.web.admin.vo.system.user.SystemUserQueryVo;
@@ -13,4 +14,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SystemUserService extends IService<SystemUser> {
 
+
+    IPage<SystemUserItemVo> pageSystemUser(Page<SystemUser> page, SystemUserQueryVo queryVo);
+
+    SystemUserItemVo getSystemUserById(Long id);
 }
