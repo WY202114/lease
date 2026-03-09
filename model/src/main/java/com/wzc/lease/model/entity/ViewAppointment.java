@@ -1,5 +1,6 @@
 package com.wzc.lease.model.entity; // 包声明，定义当前类所在命名空间
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wzc.lease.model.enums.AppointmentStatus; // 导入当前文件依赖的类型
 import io.swagger.v3.oas.annotations.media.Schema; // 导入 OpenAPI 文档注解
 import com.baomidou.mybatisplus.annotation.TableField; // 导入 MyBatis-Plus 字段映射注解
@@ -33,6 +34,7 @@ public class ViewAppointment extends BaseEntity { // 定义实体类
 
     @Schema(description = "预约时间") // OpenAPI 注解，描述模型或字段含义
     @TableField(value = "appointment_time") // MyBatis-Plus 注解，指定实体字段对应的数据库字段
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")// 确认时间格式
     private Date appointmentTime; // 字段定义，保存实体属性
 
     @Schema(description = "备注信息") // OpenAPI 注解，描述模型或字段含义

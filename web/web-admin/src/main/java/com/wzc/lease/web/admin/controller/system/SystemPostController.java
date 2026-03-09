@@ -19,6 +19,7 @@ public class SystemPostController {
     @Operation(summary = "分页获取岗位信息")
     @GetMapping("page") // 处理 HTTP GET 请求，常用于查询数据
     private Result<IPage<SystemPost>> page(@RequestParam long current, @RequestParam long size) {
+
         return Result.ok();
     }
 

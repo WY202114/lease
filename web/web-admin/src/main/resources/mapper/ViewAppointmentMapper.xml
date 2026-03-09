@@ -2,6 +2,89 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace：绑定到对应的 Mapper 接口，MyBatis 通过该命名空间将 XML 中的 SQL 与接口方法关联 -->
 <mapper namespace="com.wzc.lease.web.admin.mapper.ViewAppointmentMapper">
 
+    <!--
+        resultMap：自定义结果映射，用于处理联表查询中多表字段到 Java 对象的映射关系
+        - id="AppointmentVoMap"：该 resultMap 的唯一标识
+        - type：映射的目标 Java 类型（AppointmentVo）
+        - autoMapping="true"：开启自动映射，列名与属性名一致的字段自动赋值（使用驼峰转换）
+    -->
+    <resultMap id="AppointmentVoMap" type="com.wzc.lease.web.admin.vo.appointment.AppointmentVo" autoMapping="true">
+        <!-- id 标签：标识主键字段，property 为 Java 属性名，column 为数据库列名 -->
+        <id property="id" column="id"/>
+
+        <!--
+            association：一对一关联映射，将查询结果中公寓相关的字段映射到 AppointmentVo 中的 apartmentInfo 属性
+            - property：AppointmentVo 中的属性名
+            - javaType：该属性的 Java 类型
+            - autoMapping="true"：公寓信息的其他字段（如 district_id、city_id 等）自动映射
+        -->
+        <association property="apartmentInfo" javaType="com.wzc.lease.model.entity.ApartmentInfo" autoMapping="true">
+            <!-- 公寓的主键映射：来源于 apartment_info 表的 id，使用别名 apartment_id 避免与预约表的 id 冲突 -->
+            <id property="id" column="apartment_id"/>
+            <!-- 公寓名称映射：使用别名 apartment_name 避免与预约表的 name（预约人姓名）冲突 -->
+            <result property="name" column="apartment_name"/>
+        </association>
+    </resultMap>
+
+    <!--
+        pageAppointment：分页查询预约看房信息
+        - id：对应 Mapper 接口中的方法名
+        - resultType：直接指定返回类型（注意：此处使用 resultType 而非 resultMap，
+          适用于列名与属性名完全匹配的简单场景；如需要复杂映射则应改为 resultMap="AppointmentVoMap"）
+    -->
+    <select id="pageAppointment" resultType="com.wzc.lease.web.admin.vo.appointment.AppointmentVo">
+        <!-- 查询预约看房表（va）和公寓信息表（ai）的关联数据 -->
+        select va.id,                       <!-- 预约记录主键 -->
+        va.user_id,                         <!-- 预约用户ID -->
+        va.name,                            <!-- 预约人姓名 -->
+        va.phone,                           <!-- 预约人手机号 -->
+        va.appointment_time,                <!-- 预约时间 -->
+        va.additional_info,                 <!-- 附加信息/备注 -->
+        va.appointment_status,              <!-- 预约状态（待看房/已看房/已取消等） -->
+        ai.id   apartment_id,              <!-- 公寓ID（使用别名避免与 va.id 冲突） -->
+        ai.name apartment_name,            <!-- 公寓名称（使用别名避免与 va.name 冲突） -->
+        ai.district_id,                     <!-- 公寓所在区域ID -->
+        ai.district_name,                   <!-- 公寓所在区域名称 -->
+        ai.city_id,                         <!-- 公寓所在城市ID -->
+        ai.city_name,                       <!-- 公寓所在城市名称 -->
+        ai.province_id,                     <!-- 公寓所在省份ID -->
+        ai.province_name                    <!-- 公寓所在省份名称 -->
+        from view_appointment va            <!-- 主表：预约看房信息表，别名 va -->
+        left join
+        apartment_info ai                   <!-- 关联表：公寓信息表，别名 ai -->
+        on va.apartment_id = ai.id and ai.is_deleted=0  <!-- 关联条件：预约表的公寓ID = 公寓表的ID，且公寓未被逻辑删除 -->
+
+        <!--
+            <where> 标签：智能生成 WHERE 子句
+            - 自动去除第一个条件前多余的 AND/OR
+            - 如果所有条件都为空，则不生成 WHERE 子句
+        -->
+        <where>
+            va.is_deleted = 0               <!-- 基础条件：只查询未被逻辑删除的预约记录 -->
+
+            <!-- 以下为动态查询条件：当查询参数不为 null 时才拼接对应的筛选条件 -->
+            <if test="queryVo.provinceId != null">
+                and ai.province_id = #{queryVo.provinceId}   <!-- 按省份筛选 -->
+            </if>
+            <if test="queryVo.cityId != null">
+                and ai.city_id = #{queryVo.cityId}           <!-- 按城市筛选 -->
+            </if>
+            <if test="queryVo.districtId != null">
+                and ai.district_id = #{queryVo.districtId}   <!-- 按区域筛选 -->
+            </if>
+            <if test="queryVo.apartmentId != null">
+                and va.apartment_id = #{queryVo.apartmentId} <!-- 按公寓ID筛选 -->
+            </if>
+            <if test="queryVo.name != null and queryVo.name != ''">
+                and va.name like concat('%',#{queryVo.name},'%')   <!-- 按预约人姓名模糊查询 -->
+            </if>
+            <if test="queryVo.phone != null and queryVo.phone != ''">
+                and va.phone like concat('%',#{queryVo.phone},'%') <!-- 按手机号模糊查询 -->
+            </if>
+        </where>
+    </select>
 </mapper>

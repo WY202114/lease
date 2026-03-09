@@ -22,7 +22,8 @@ public class UserInfo extends BaseEntity { // 定义实体类
     private String phone; // 字段定义，保存实体属性
 
     @Schema(description = "密码") // OpenAPI 注解，描述模型或字段含义
-    @TableField(value = "password") // MyBatis-Plus 注解，指定实体字段对应的数据库字段
+    @TableField(value = "password", select = false) // MyBatis-Plus 注解，指定实体字段对应的数据库字段
+    //select = false：mybatis-plus生成的通用mapper或service生成的sql就不会查询该字段
     private String password; // 字段定义，保存实体属性
 
     @Schema(description = "头像url") // OpenAPI 注解，描述模型或字段含义
